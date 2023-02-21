@@ -64,6 +64,8 @@ class DropTail : public Queue {
 	void enque(Packet*);
 	Packet* deque();
 	void shrink_queue();	// To shrink queue and drop excessive packets.
+	double calculate_p();	/* IAPI drop probability */
+	void enque_IAPI(Packet*);
 
 	PacketQueue *q_;	/* underlying FIFO queue */
 	int drop_front_;	/* drop-from-front (rather than from tail) */

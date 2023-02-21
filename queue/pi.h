@@ -74,8 +74,21 @@ struct edp_pi {
 	double a, b;		 /* parameters to pi controller */
 	double w;				/* sampling frequency (# of times per second) */ 
 	double qref;		/* desired queue size */
-	edp_pi(): mean_pktsize(0), bytes(0), setbit(0), a(0.0), b(0.0), w(0.0), qref(0.0) { }
+	/*
+		IAPI: Intelligent Adaptive PI controller
+	*/
+	int iapi_enable; 		/* IAPI scheme is enabled if true */
+	double kp; 				/* proportional coefficient */
+	double ki;				/* integral coefficient */
+	double k1;				/* coefficient of PI */
+	double ki0;				/* original integral coefficient */
+	int e_thres; 			/* error threshold */
+	int e_old;				/* previous found error on the last packet arrival */
+	edp_pi(): mean_pktsize(0), bytes(0), setbit(0), a(0.0), b(0.0), w(0.0), qref(0.0),
+	iapi_enable(0), e_thres(0), kp(0), ki(0), ki0(0), k1(0), e_old(0) { }
 };
+
+
 
 /*
  * Early drop variables, maintained by PI
@@ -114,6 +127,7 @@ class PIQueue : public Queue {
 	int drop_early(Packet* pkt, int qlen);
  	double calculate_p();
 	PICalcTimer CalcTimer;
+	void print_iapi_params();
 
 	LinkDelay* link_;	/* outgoing link */
 	int fifo_;		/* fifo queue? */

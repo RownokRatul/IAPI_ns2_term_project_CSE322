@@ -73,6 +73,8 @@ PIQueue::PIQueue(const char * trace) : CalcTimer(this), link_(NULL), q_(NULL),
 	}
 	strcpy(traceType, trace);
 
+	print_iapi_params();
+
 	bind_bool("bytes_", &edp_.bytes);	    // boolean: use bytes?
 	bind_bool("queue_in_bytes_", &qib_);	    // boolean: q in bytes?
 	bind("a_", &edp_.a);		
@@ -83,6 +85,18 @@ PIQueue::PIQueue(const char * trace) : CalcTimer(this), link_(NULL), q_(NULL),
 	bind_bool("setbit_", &edp_.setbit);	    // mark instead of drop
 	bind("prob_", &edv_.v_prob);		    // dropping probability
 	bind("curq_", &curq_);			    // current queue size
+
+	/*
+		IAPI params bind from TCL
+	*/
+	bind_bool("IAPI_enable_", &edp_.iapi_enable);
+	bind("e_thres_", &edp_.e_thres);
+	bind("kp_", &edp_.kp);
+	bind("k1_", &edp_.k1);
+	bind("ki0_", &edp_.ki0);
+
+	print_iapi_params();
+
 	q_ = new PacketQueue();			    // underlying queue
 	pq_ = q_;
 	reset();
@@ -108,6 +122,7 @@ void PIQueue::reset()
 
 void PIQueue::enque(Packet* pkt)
 {
+	// printf("inside PI::ENQ\n");
 	//double now = Scheduler::instance().clock();
 	hdr_cmn* ch = hdr_cmn::access(pkt);
 	++edv_.count;
@@ -339,4 +354,11 @@ void PIQueue::trace(TracedVar* v)
 void PICalcTimer::expire(Event *)
 {
 	a_->calculate_p();
+}
+
+void PIQueue::print_iapi_params() {
+	printf("--------------\n");
+	printf("IAPI: %d\nq_ref:%lf\ne_thres:%d\nkp:%lf\nki0:%.10lf\nk1:%lf\nSamp_Freq:%lf\ne_old:%d\n",
+	edp_.iapi_enable, edp_.qref, edp_.e_thres, edp_.kp, edp_.ki0, edp_.k1, edp_.w, edp_.e_old);
+	printf("--------------\n");
 }
