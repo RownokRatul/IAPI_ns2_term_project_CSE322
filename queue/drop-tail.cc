@@ -84,7 +84,7 @@ DropTail::command(int argc, const char*const* argv)
  */
 void DropTail::enque(Packet* p)
 {
-	printf("inside droptail: enque\n");
+	// printf("inside droptail: enque\n");
 	if (summarystats) {
                 Queue::updateStats(qib_?q_->byteLength():q_->length());
 	}

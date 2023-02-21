@@ -634,7 +634,7 @@ void REDQueue::enque(Packet* pkt)
 	 */
 
 	/*  print_edp(); */
-	printf("In RED enQ\n");
+	// printf("In RED enQ\n");
 	int m = 0;
 	if (idle_) {
 		// A packet that arrives to an idle queue will never
